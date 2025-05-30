@@ -1,0 +1,96 @@
+get weather by city 
+{
+  "location": {
+    "city": "London",
+    "country": "GB"
+  },
+  "weather": {
+    "condition": "Clouds",
+    "description": "scattered clouds",
+    "temperature": {
+      "current": 15,
+      "feels_like": 14,
+      "min": 13,
+      "max": 16
+    },
+    "humidity": 76,
+    "wind": {
+      "speed": 4.12,
+      "direction": 280
+    }
+  }
+}
+
+
+get history for the users
+{
+  "history": [
+    {
+      "_id": "...",
+      "user": {
+        "username": "john_doe",
+        "email": "john@example.com"
+      },
+      "location": {
+        "city": "London",
+        "country": "GB"
+      },
+      "weather": {
+        "condition": "Clouds",
+        "description": "scattered clouds",
+        "temperature": {
+          "current": 15,
+          "feels_like": 14,
+          "min": 13,
+          "max": 16
+        },
+        "humidity": 76,
+        "wind": {
+          "speed": 4.12,
+          "direction": 280
+        }
+      },
+      "createdAt": "2024-03-15T12:00:00.000Z"
+    }
+  ],
+  "total": 25,
+  "page": 1,
+  "totalPages": 3
+}
+
+
+get history for the admin
+{
+  "history": [
+    {
+      "_id": "...",
+      "user": {
+        "username": "john_doe",
+        "email": "john@example.com"
+      },
+      "location": {
+        "city": "London",
+        "country": "GB"
+      },
+      "weather": {
+        "condition": "Clouds",
+        "description": "scattered clouds",
+        "temperature": {
+          "current": 15,
+          "feels_like": 14,
+          "min": 13,
+          "max": 16
+        },
+        "humidity": 76,
+        "wind": {
+          "speed": 4.12,
+          "direction": 280
+        }
+      },
+      "createdAt": "2024-03-15T12:00:00.000Z"
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "totalPages": 10
+}
