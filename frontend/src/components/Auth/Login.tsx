@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { User } from "../types";
+import { useAuth } from "@context/AuthContext";
+import { User } from "../../types";
 
 interface LoginResponse {
   token: string;

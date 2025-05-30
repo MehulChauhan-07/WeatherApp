@@ -63,6 +63,10 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   }
 };
 
+// You can add static or instance methods for user-related logic here
+// For example, a method to find users by email:
+// userSchema.statics.findByEmail = async function(email) { ... }
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

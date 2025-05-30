@@ -1,9 +1,9 @@
 import { FC, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import UserTable from "./UserTable";
-import HistoryTable from "./HistoryTable";
-import Statistics from "./Statistics";
+import UserTable from "@components/Admin/UserTable";
+import HistoryTable from "@components/Admin/HistoryTable";
+import Statistics from "@components/Admin/Statistics";
 import axios from "axios";
 
 interface AdminDashboardProps {

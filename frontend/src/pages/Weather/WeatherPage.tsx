@@ -3,12 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSun, FaMoon, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import SearchBar from "../components/SearchBar";
-import ModernWeatherCard from "../components/ModernWeatherCard";
-import LoadingSpinner from "../components/LoadingSpinner";
-import RecentSearches from "../components/RecentSearches";
-import { useAuth } from "../context/AuthContext";
-import { useWeatherCache } from "../hooks/useWeatherCache";
+import SearchBar from "@components/weather/SearchBar";
+import ModernWeatherCard from "@components/weather/ModernWeatherCard";
+import LoadingSpinner from "@components/common/LoadingSpinner";
+import RecentSearches from "@components/RecentSearches";
+import { useAuth } from "@context/AuthContext";
+import { useWeatherCache } from "@hooks/useWeatherCache";
 
 interface WeatherData {
   data: {

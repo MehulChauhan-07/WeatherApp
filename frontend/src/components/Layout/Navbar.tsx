@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sun, Moon, LogOut, User, Shield } from "lucide-react";
-import { User as UserType } from "../types";
-import { useAuth } from "../context/AuthContext";
+import { User as UserType } from "../../types";
+import { useAuth } from "@context/AuthContext";
 
 interface NavbarProps {
   darkMode: boolean;

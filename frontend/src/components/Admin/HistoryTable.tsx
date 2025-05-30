@@ -61,14 +61,14 @@ const HistoryTable: FC<HistoryTableProps> = ({ darkMode }) => {
     if (!selectedHistory) return;
 
     try {
-      console.log("Selected history object:", selectedHistory);
-      console.log("Selected history keys:", Object.keys(selectedHistory));
-      console.log("Selected history userId:", selectedHistory.userId);
-      console.log("Selected history _id:", selectedHistory._id);
+      console.log(
+        "Attempting to delete history entry with id:",
+        selectedHistory._id
+      );
 
       const token = localStorage.getItem("token");
       console.log("Using token:", token);
-      const url = `${API_BASE_URL}/users/admin/users/${selectedHistory.userId}/history`;
+      const url = `${API_BASE_URL}/weather/history/${selectedHistory._id}`;
       console.log("DELETE request to URL:", url);
 
       const response = await axios.delete(url, {
@@ -79,26 +79,26 @@ const HistoryTable: FC<HistoryTableProps> = ({ darkMode }) => {
 
       if (response.data.success) {
         console.log(
-          "History deleted successfully for user:",
-          selectedHistory.username
+          "History entry deleted successfully with id:",
+          selectedHistory._id
         );
         setHistory((prevHistory) =>
-          prevHistory.filter((item) => item.userId !== selectedHistory.userId)
+          prevHistory.filter((item) => item._id !== selectedHistory._id)
         );
         setShowDeleteModal(false);
         setSelectedHistory(null);
       } else {
         console.error("Delete failed:", response.data.message);
-        setError(response.data.message || "Failed to delete history");
+        setError(response.data.message || "Failed to delete history entry");
       }
     } catch (err: any) {
-      console.error("Failed to delete history:", err);
+      console.error("Failed to delete history entry:", err);
       console.error("Error details:", {
         message: err.message,
         response: err.response?.data,
         status: err.response?.status,
       });
-      setError(err.response?.data?.message || "Failed to delete history");
+      setError(err.response?.data?.message || "Failed to delete history entry");
     }
   };
 
@@ -225,8 +225,8 @@ const HistoryTable: FC<HistoryTableProps> = ({ darkMode }) => {
             >
               <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
               <p className="mb-6">
-                Are you sure you want to delete all search history for user{" "}
-                {selectedHistory?.username}? This action cannot be undone.
+                Are you sure you want to delete this weather history entry? This
+                action cannot be undone.
               </p>
               <div className="flex justify-end space-x-4">
                 <button
@@ -234,7 +234,7 @@ const HistoryTable: FC<HistoryTableProps> = ({ darkMode }) => {
                     setShowDeleteModal(false);
                     setSelectedHistory(null);
                   }}
-                  className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>

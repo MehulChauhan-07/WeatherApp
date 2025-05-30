@@ -1,5 +1,6 @@
 const axios = require("axios");
 const WeatherHistory = require("../models/WeatherHistory");
+const SearchHistory = require("../models/SearchHistory");
 
 // @desc    Get weather by city
 // @route   GET /api/weather
@@ -7,59 +8,36 @@ const WeatherHistory = require("../models/WeatherHistory");
 const getWeatherByCity = async (req, res) => {
   try {
     const { city } = req.query;
-    const apiKey = process.env.OPENWEATHER_API_KEY;
-
     if (!city) {
-      return res.status(400).json({ message: "City parameter is required" });
-    }
-
-    if (!req.user) {
-      return res.status(401).json({
+      return res.status(400).json({
         success: false,
-        message: "Not authorized, no user found",
+        message: "City parameter is required",
       });
     }
 
-    const response = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
-    );
+    const apiKey = process.env.WEATHER_API_KEY;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-    const weatherData = {
-      location: {
-        city: response.data.name,
-        country: response.data.sys.country,
-      },
-      weather: {
-        condition: response.data.weather[0].main,
-        description: response.data.weather[0].description,
-        temperature: {
-          current: response.data.main.temp,
-          feels_like: response.data.main.feels_like,
-          min: response.data.main.temp_min,
-          max: response.data.main.temp_max,
-        },
-        humidity: response.data.main.humidity,
-        wind: {
-          speed: response.data.wind.speed,
-          direction: response.data.wind.deg,
-        },
-      },
-    };
+    const response = await axios.get(url);
+    const weatherData = response.data;
 
-    // Save to history
-    await WeatherHistory.create({
+    // Save search history
+    await SearchHistory.create({
       user: req.user._id,
-      location: weatherData.location,
-      weather: weatherData.weather,
+      city: weatherData.name,
+      country: weatherData.sys.country,
     });
 
-    res.json(weatherData);
+    res.json({
+      success: true,
+      data: weatherData,
+    });
   } catch (error) {
     console.error("Weather fetch error:", error);
-    if (error.response?.status === 404) {
-      return res.status(404).json({ message: "City not found" });
-    }
-    res.status(500).json({ message: "Error fetching weather data" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching weather data",
+    });
   }
 };
 
@@ -68,45 +46,33 @@ const getWeatherByCity = async (req, res) => {
 // @access  Private
 const getUserHistory = async (req, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authorized, no user found",
-      });
-    }
-
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const history = await WeatherHistory.find({ user: req.user._id })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await WeatherHistory.countDocuments({ user: req.user._id });
+    const history = await SearchHistory.find({ user: req.user._id })
+      .sort({ searchDate: -1 })
+      .limit(10);
 
     res.json({
+      success: true,
       history,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
     console.error("History fetch error:", error);
-    res.status(500).json({ message: "Error fetching weather history" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching search history",
+    });
   }
 };
 
-// @desc    Get all users' weather history (admin only)
+// @desc    Get all users' weather history
 // @route   GET /api/weather/history/all
 // @access  Private/Admin
-const getAllUsersHistory = async (req, res) => {
+const getAllHistory = async (req, res) => {
   try {
+    // Check if user is admin
     if (!req.user.isAdmin) {
       return res.status(403).json({
         success: false,
-        message: "Not authorized as admin",
+        message: "Not authorized to access this route",
       });
     }
 
@@ -114,28 +80,72 @@ const getAllUsersHistory = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const history = await WeatherHistory.find()
+    const total = await SearchHistory.countDocuments();
+    const history = await SearchHistory.find()
+      .sort({ searchDate: -1 })
       .populate("user", "username email")
-      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await WeatherHistory.countDocuments();
-
     res.json({
+      success: true,
       history,
-      total,
-      page,
+      currentPage: page,
       totalPages: Math.ceil(total / limit),
+      totalItems: total,
     });
   } catch (error) {
     console.error("All history fetch error:", error);
-    res.status(500).json({ message: "Error fetching all weather history" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching all search history",
+    });
+  }
+};
+
+// @desc    Delete a specific weather history entry
+// @route   DELETE /api/weather/history/:id
+// @access  Private
+const deleteHistory = async (req, res) => {
+  try {
+    const historyEntry = await SearchHistory.findById(req.params.id);
+
+    if (!historyEntry) {
+      return res.status(404).json({
+        success: false,
+        message: "History entry not found",
+      });
+    }
+
+    // Check if the user owns this history entry or is an admin
+    if (
+      historyEntry.user.toString() !== req.user._id.toString() &&
+      !req.user.isAdmin
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this history entry",
+      });
+    }
+
+    await historyEntry.deleteOne();
+
+    res.json({
+      success: true,
+      message: "History entry deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete history error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting history entry",
+    });
   }
 };
 
 module.exports = {
   getWeatherByCity,
   getUserHistory,
-  getAllUsersHistory,
+  getAllHistory,
+  deleteHistory,
 };

@@ -2,10 +2,10 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSun, FaMoon, FaHistory, FaSignOutAlt } from "react-icons/fa";
-import SearchBar from "../components/SearchBar";
-import WeatherCard from "../components/WeatherCard";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { useAuth } from "../context/AuthContext";
+import SearchBar from "@components/weather/SearchBar";
+import WeatherCard from "@components/WeatherCard";
+import LoadingSpinner from "@components/common/LoadingSpinner";
+import { useAuth } from "@context/AuthContext";
 
 interface WeatherData {
   location: {
