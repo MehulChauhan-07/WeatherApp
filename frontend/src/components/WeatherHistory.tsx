@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import WeatherHistoryCard from "./WeatherHistoryCard";
+import ModernWeatherHistoryCard from "./ModernWeatherHistoryCard";
 
 interface WeatherHistoryProps {
   darkMode: boolean;
@@ -127,9 +127,9 @@ const WeatherHistory: React.FC<WeatherHistoryProps> = ({ darkMode }) => {
             </div>
           ) : (
             <>
-              <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
                 {history.map((entry) => (
-                  <WeatherHistoryCard
+                  <ModernWeatherHistoryCard
                     key={entry._id}
                     historyData={{
                       location: entry.location,

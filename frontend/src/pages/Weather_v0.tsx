@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSun, FaMoon, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import SearchBar from "../components/SearchBar";
-import ModernWeatherCard from "../components/ModernWeatherCard";
+import WeatherCard from "../components/WeatherCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../context/AuthContext";
 
@@ -165,14 +165,12 @@ const WeatherPage = ({ user, darkMode, toggleDarkMode }: WeatherPageProps) => {
           </div>
         )}
         {weather && !loading && (
-          <div className="max-w-2xl mx-auto mt-8">
-            <ModernWeatherCard
-              weatherData={weather}
-              unit={unit}
-              convertTemp={convertTemp}
-              darkMode={darkMode}
-            />
-          </div>
+          <WeatherCard
+            weatherData={weather}
+            unit={unit}
+            convertTemp={convertTemp}
+            darkMode={darkMode}
+          />
         )}
       </div>
     </div>
