@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SearchBar from "@components/weather/SearchBar";
 import ModernWeatherCard from "@components/weather/ModernWeatherCard";
 import LoadingSpinner from "@components/common/LoadingSpinner";
-import RecentSearches from "@components/RecentSearches";
+import RecentSearches from "@/components/weather/RecentSearches";
 import { useAuth } from "@context/AuthContext";
 import { useWeatherCache } from "@hooks/useWeatherCache";
 

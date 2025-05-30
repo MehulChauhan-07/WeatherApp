@@ -97,11 +97,17 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Generate token with longer expiration for mobile
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+      algorithm: "HS256",
+    });
 
     // Log successful login
     console.log("Login successful for user:", email);
+
+    // Set token in response header
+    res.setHeader("Authorization", `Bearer ${token}`);
 
     res.json({
       success: true,
