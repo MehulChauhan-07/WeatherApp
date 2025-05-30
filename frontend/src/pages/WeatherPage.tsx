@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSun, FaMoon, FaHistory, FaSignOutAlt } from "react-icons/fa";
 import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useAuth } from "../context/AuthContext";
 
 interface WeatherData {
   location: {
@@ -39,51 +40,58 @@ interface WeatherPageProps {
   user: User;
   darkMode: boolean;
   toggleDarkMode: () => void;
-  onLogout: () => void;
 }
 
-const WeatherPage = ({
-  user,
-  darkMode,
-  toggleDarkMode,
-  onLogout,
-}: WeatherPageProps) => {
+const WeatherPage = ({ user, darkMode, toggleDarkMode }: WeatherPageProps) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [unit, setUnit] = useState<"C" | "F">("C");
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  const fetchWeather = async (city: string) => {
-    try {
-      setLoading(true);
-      setError("");
-      const token = localStorage.getItem("token");
-      const response = await axios.get<WeatherData>(
-        `http://localhost:5000/api/weather?city=${city}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setWeather(response.data);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        if (err.response?.status === 401) {
-          setError("Please login to check weather");
-          onLogout();
-          navigate("/login");
+  const fetchWeather = useCallback(
+    async (city: string) => {
+      try {
+        setLoading(true);
+        setError("");
+        setWeather(null); // Clear previous weather data
+
+        const token = localStorage.getItem("token");
+        const response = await axios.get<WeatherData>(
+          `http://localhost:5000/api/weather?city=${city}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        // Ensure we're setting the state with the new data
+        setWeather(response.data);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 401) {
+            setError("Please login to check weather");
+            logout();
+            navigate("/login");
+          } else {
+            setError(
+              err.response?.data?.message || "Error fetching weather data"
+            );
+          }
         } else {
-          setError(
-            err.response?.data?.message || "Error fetching weather data"
-          );
+          setError("An unexpected error occurred");
         }
-      } else {
-        setError("An unexpected error occurred");
+        setWeather(null);
+      } finally {
+        setLoading(false);
       }
-      setWeather(null);
-    } finally {
-      setLoading(false);
-    }
+    },
+    [navigate, logout]
+  );
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   const toggleUnit = () => {
@@ -140,7 +148,7 @@ const WeatherPage = ({
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center"
             >
               <FaSignOutAlt className="mr-2" />
@@ -158,7 +166,7 @@ const WeatherPage = ({
         )}
         {weather && !loading && (
           <WeatherCard
-            weather={weather}
+            weatherData={weather}
             unit={unit}
             convertTemp={convertTemp}
             darkMode={darkMode}

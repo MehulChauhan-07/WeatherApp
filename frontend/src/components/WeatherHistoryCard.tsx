@@ -1,6 +1,6 @@
 import React from "react";
 
-interface WeatherData {
+interface WeatherHistoryData {
   location: {
     city: string;
     country: string;
@@ -20,29 +20,27 @@ interface WeatherData {
       deg: number;
     };
   };
+  searchedAt: string;
 }
 
-interface WeatherCardProps {
-  weatherData: WeatherData;
-  unit: "C" | "F";
-  convertTemp: (temp: number) => number;
+interface WeatherHistoryCardProps {
+  historyData: WeatherHistoryData;
   darkMode: boolean;
 }
 
-const WeatherCard: React.FC<WeatherCardProps> = ({
-  weatherData,
-  unit,
-  convertTemp,
+const WeatherHistoryCard: React.FC<WeatherHistoryCardProps> = ({
+  historyData,
   darkMode,
 }) => {
-  if (!weatherData) {
+  if (!historyData) {
     return null;
   }
 
-  const { location, weather } = weatherData;
+  const { location, weather, searchedAt } = historyData;
+  const searchDate = new Date(searchedAt).toLocaleString();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -51,14 +49,16 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
           <p className="text-gray-600 dark:text-gray-300 capitalize">
             {weather.description}
           </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Searched on: {searchDate}
+          </p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-gray-800 dark:text-white">
-            {convertTemp(Math.round(weather.temperature.current))}°{unit}
+            {Math.round(weather.temperature.current)}°C
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Feels like {convertTemp(Math.round(weather.temperature.feels_like))}
-            °{unit}
+            Feels like {Math.round(weather.temperature.feels_like)}°C
           </p>
         </div>
       </div>
@@ -67,8 +67,8 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
         <div>
           <p className="text-gray-600 dark:text-gray-400">Min/Max</p>
           <p className="text-gray-800 dark:text-white">
-            {convertTemp(Math.round(weather.temperature.min))}°/
-            {convertTemp(Math.round(weather.temperature.max))}°
+            {Math.round(weather.temperature.min)}°/
+            {Math.round(weather.temperature.max)}°
           </p>
         </div>
         <div>
@@ -86,4 +86,4 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
   );
 };
 
-export default WeatherCard;
+export default WeatherHistoryCard;

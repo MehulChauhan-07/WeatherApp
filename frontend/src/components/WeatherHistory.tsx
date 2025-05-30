@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import WeatherCard from "./WeatherCard";
+import WeatherHistoryCard from "./WeatherHistoryCard";
 
 interface WeatherHistoryProps {
   darkMode: boolean;
@@ -24,7 +24,7 @@ interface WeatherData {
     humidity: number;
     wind: {
       speed: number;
-      direction: number;
+      deg: number;
     };
   };
 }
@@ -72,7 +72,6 @@ const WeatherHistory: React.FC<WeatherHistoryProps> = ({ darkMode }) => {
         }
       );
 
-      console.log("History data received:", response.data);
       setHistory(response.data.history);
       setTotalPages(response.data.totalPages);
       setError("");
@@ -130,17 +129,15 @@ const WeatherHistory: React.FC<WeatherHistoryProps> = ({ darkMode }) => {
             <>
               <div className="space-y-6">
                 {history.map((entry) => (
-                  <div key={entry._id} className="relative">
-                    <WeatherCard
-                      weatherData={{
-                        location: entry.location,
-                        weather: entry.weather,
-                      }}
-                    />
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      Searched on: {new Date(entry.createdAt).toLocaleString()}
-                    </p>
-                  </div>
+                  <WeatherHistoryCard
+                    key={entry._id}
+                    historyData={{
+                      location: entry.location,
+                      weather: entry.weather,
+                      searchedAt: entry.createdAt,
+                    }}
+                    darkMode={darkMode}
+                  />
                 ))}
               </div>
 
