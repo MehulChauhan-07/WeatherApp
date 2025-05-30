@@ -1,8 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { User } from "../types";
 
-const Signup = () => {
+interface SignupProps {
+  setUser: (user: User | null) => void;
+  darkMode: boolean;
+}
+
+const Signup: React.FC<SignupProps> = ({ setUser, darkMode }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -43,7 +49,11 @@ const Signup = () => {
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data));
+        const userData = {
+          ...response.data.user,
+          isAdmin: response.data.user.isAdmin || false,
+        };
+        setUser(userData);
         navigate("/weather");
       } else {
         setError("Registration failed. Please try again.");
@@ -59,10 +69,18 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      className={`min-h-screen flex items-center justify-center ${
+        darkMode ? "bg-gray-900" : "bg-gray-50"
+      } py-12 px-4 sm:px-6 lg:px-8`}
+    >
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2
+            className={`mt-6 text-center text-3xl font-extrabold ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
             Create your account
           </h2>
         </div>
@@ -77,7 +95,11 @@ const Signup = () => {
                 name="username"
                 type="text"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Username"
                 value={formData.username}
                 onChange={handleChange}
@@ -92,7 +114,11 @@ const Signup = () => {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -107,7 +133,11 @@ const Signup = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -122,7 +152,11 @@ const Signup = () => {
                 name="confirmPassword"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -145,7 +179,7 @@ const Signup = () => {
           </div>
 
           <div className="text-sm text-center">
-            <p className="text-gray-600">
+            <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
               Already have an account?{" "}
               <Link
                 to="/login"

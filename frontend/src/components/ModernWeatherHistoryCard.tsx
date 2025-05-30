@@ -9,6 +9,7 @@ import {
   Droplets,
   Thermometer,
   Clock,
+  Trash2,
 } from "lucide-react";
 
 interface WeatherHistoryData {
@@ -32,11 +33,13 @@ interface WeatherHistoryData {
     };
   };
   searchedAt: string;
+  _id: string;
 }
 
 interface ModernWeatherHistoryCardProps {
   historyData: WeatherHistoryData;
   darkMode: boolean;
+  onDelete?: (id: string) => void;
 }
 
 const getWeatherIcon = (condition: string) => {
@@ -50,10 +53,11 @@ const getWeatherIcon = (condition: string) => {
 const ModernWeatherHistoryCard: React.FC<ModernWeatherHistoryCardProps> = ({
   historyData,
   darkMode,
+  onDelete,
 }) => {
   if (!historyData) return null;
 
-  const { location, weather, searchedAt } = historyData;
+  const { location, weather, searchedAt, _id } = historyData;
   const searchDate = new Date(searchedAt).toLocaleString();
 
   return (
@@ -78,9 +82,20 @@ const ModernWeatherHistoryCard: React.FC<ModernWeatherHistoryCardProps> = ({
               {location.country}
             </p>
           </div>
-          <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
-            <Clock className="w-4 h-4" />
-            <span className="text-sm">{searchDate}</span>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
+              <Clock className="w-4 h-4" />
+              <span className="text-sm">{searchDate}</span>
+            </div>
+            {onDelete && (
+              <button
+                onClick={() => onDelete(_id)}
+                className="p-1 text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors"
+                title="Delete history"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 

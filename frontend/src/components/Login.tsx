@@ -1,17 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { User } from "../types";
 
-const Login = () => {
+interface LoginResponse {
+  token: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    isAdmin: boolean;
+  };
+}
+
+interface LoginProps {
+  setUser: (user: User | null) => void;
+  darkMode: boolean;
+}
+
+const Login: React.FC<LoginProps> = ({ setUser, darkMode }) => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && user) {
+      navigate("/weather");
+    }
+  }, [navigate, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -26,7 +50,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<LoginResponse>(
         "http://localhost:5000/api/users/login",
         {
           email: formData.email,
@@ -35,7 +59,15 @@ const Login = () => {
       );
 
       if (response.data.token) {
-        login(response.data.token, response.data.user);
+        const userData = {
+          ...response.data.user,
+          isAdmin: Boolean(response.data.user.isAdmin),
+        };
+        console.log("Login response:", response.data);
+        console.log("User data with admin status:", userData);
+        console.log("Admin status type:", typeof userData.isAdmin);
+        login(response.data.token, userData);
+        setUser(userData);
         navigate("/weather");
       } else {
         setError("Login failed. Please try again.");
@@ -51,10 +83,18 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      className={`min-h-screen flex items-center justify-center ${
+        darkMode ? "bg-gray-900" : "bg-gray-50"
+      } py-12 px-4 sm:px-6 lg:px-8`}
+    >
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2
+            className={`mt-6 text-center text-3xl font-extrabold ${
+              darkMode ? "text-white" : "text-gray-900"
+            }`}
+          >
             Sign in to your account
           </h2>
         </div>
@@ -69,7 +109,11 @@ const Login = () => {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -84,7 +128,11 @@ const Login = () => {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 bg-white text-gray-900"
+                } placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -107,10 +155,10 @@ const Login = () => {
           </div>
 
           <div className="text-sm text-center">
-            <p className="text-gray-600">
+            <p className={darkMode ? "text-gray-400" : "text-gray-600"}>
               Don't have an account?{" "}
               <Link
-                to="/signup"
+                to="/register"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Sign up

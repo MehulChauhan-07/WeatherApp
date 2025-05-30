@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const protect = async (req, res, next) => {
+// Protect routes - verify token
+exports.protect = async (req, res, next) => {
   try {
     let token;
 
@@ -11,62 +12,73 @@ const protect = async (req, res, next) => {
       req.headers.authorization.startsWith("Bearer")
     ) {
       token = req.headers.authorization.split(" ")[1];
-      console.log("Token received:", token.substring(0, 20) + "...");
     }
 
     if (!token) {
-      console.log("No token provided in request");
       return res.status(401).json({
         success: false,
-        message: "Not authorized, no token provided",
+        message: "Not authorized to access this route",
       });
     }
 
     try {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Token decoded:", decoded);
 
       // Get user from token
       const user = await User.findById(decoded.id).select("-password");
-
       if (!user) {
-        console.log("User not found for token");
         return res.status(401).json({
           success: false,
           message: "User not found",
         });
       }
 
-      console.log("User authenticated:", user.username);
       // Add user to request object
       req.user = user;
       next();
     } catch (error) {
-      console.error("Token verification error:", error);
       return res.status(401).json({
         success: false,
-        message: "Not authorized, token failed",
+        message: "Not authorized to access this route",
       });
     }
   } catch (error) {
     console.error("Auth middleware error:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Server error in auth middleware",
+      message: "Server error in authentication",
     });
   }
 };
 
-const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
+// Check if user is admin
+exports.isAdmin = async (req, res, next) => {
+  try {
+    // First check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized to access this route",
+      });
+    }
+
+    // Then check if user is admin
+    if (!req.user.isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized as admin",
+      });
+    }
+
     next();
-  } else {
-    return res.status(403).json({
+  } catch (error) {
+    console.error("Admin middleware error:", error);
+    res.status(500).json({
       success: false,
-      message: "Not authorized as admin",
+      message: "Server error in admin check",
     });
   }
 };
 
-module.exports = { protect, admin };
+// module.exports = { protect, isAdmin };
