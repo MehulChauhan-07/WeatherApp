@@ -1,117 +1,219 @@
-# ☕ ByteForge – Online Java Learning Platform for Beginners
+# WeatherApp
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/MehulChauhan-07/WeatherApp)
 
-![Last Updated](https://img.shields.io/badge/Updated-2025--05--16-blue)  
-An intuitive platform to master Java programming through real-time coding, interactive lessons, and AI-powered assistance.
+This is a full-stack weather application with a React/Vite/TypeScript frontend and an Express backend.
 
----
+## Table of Contents
 
-## 🚀 Introduction
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+  - [Running the Application](#running-the-application)
+- [Backend API Endpoints](#backend-api-endpoints)
+  - [Authentication](#authentication)
+  - [Weather](#weather)
+  - [Admin](#admin)
 
-**ByteForge** is an interactive Java learning platform built for beginners. It bridges the gap between theory and practice through a seamless combination of hands-on coding, structured tutorials, personal notes, and a 24/7 AI assistant.
+## Features
 
-Whether you're just starting your programming journey or need a refresher on Java fundamentals, ByteForge makes learning intuitive and engaging.
+- User Authentication (Register, Login)
+- Fetch current weather by city
+- Save user's weather search history
+- User-specific weather history page with deletion
+- Admin Dashboard:
+  - View all users
+  - Change user roles (Admin/User)
+  - Delete users
+  - View all weather search history
+  - Delete individual history entries (Admin)
+  - View application statistics
+- Modern UI/UX with Tailwind CSS, Shadcn UI, Lucide Icons, and Framer Motion
+- Responsive Design
 
----
+## Getting Started
 
-## 🌟 Mission Statement
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-To make Java education **accessible**, **engaging**, and **effective** for everyone.  
-Unlike platforms that only emphasize theory or coding challenges, **ByteForge** offers a comprehensive environment with:
+### Prerequisites
 
-- 📘 Structured Lessons
-- 👨‍💻 Live Code Practice
-- 🤖 Instant AI Support
-- 📝 Personal Notes
-- 📈 Progress Tracking
+- Node.js and npm installed.
+- MongoDB installed and running.
 
----
+### Installation
 
-## 👨‍💻 User Journey
+1. Clone the repository:
 
-1. **Start Learning** – Begin with beginner-friendly tutorials
-2. **Practice in Real-Time** – Code directly in the integrated Java editor
-3. **Get Help When Stuck** – Ask the AI chatbot for instant explanations
-4. **Take Notes** – Save key concepts and code snippets
-5. **Track Progress** – Visualize your learning path with the progress tracker
+   ```bash
+   git clone https://github.com/mehulchauhan-07/weatherapp.git
+   cd weatherapp
+   ```
 
----
+2. Install frontend dependencies:
 
-## 🛠️ Features
+   ```bash
+   cd frontend
+   npm install
+   ```
 
-### 🎯 Frontend (React + Vite + TypeScript)
+3. Install backend dependencies:
 
-- 🧑‍💻 **Live Code Editor** – Built with Monaco Editor for real-time Java coding
-- 📝 **Notes Keeper** – Organize and store learning notes
-- 🤖 **AI Chatbot** – Java-related help 24/7
-- 🎨 **UI/UX** – Powered by DaisyUI, Herui, and ShadCN
-- 📱 **Responsive Design** – Optimized for desktop and mobile
+   ```bash
+   cd ../backend
+   npm install
+   ```
 
-### ⚙️ Backend (Spring Boot + Docker + SQL)
+### Environment Variables
 
-- 🐳 **Docker-Based Execution** – Secure Java compilation inside isolated containers
-- 🗄️ **SQL Database** – Manages user data and progress
-- 🔐 **Authentication** – JWT and OAuth for secure access
-- 📊 **Progress Tracking** – Monitors coding activity
-- 🧪 **Auto Code Evaluation** – Automated feedback for Java programs
+Create a `.env` file in the `backend` directory with the following variables:
 
----
-
-## 📚 Learning Resources
-
-- 📘 **Structured Tutorials** – From Java basics to advanced topics
-- 🧩 **Interactive Exercises** – Practice with increasing complexity
-- 🧠 **Code Challenges** – Real-world problems to apply knowledge
-- 💡 **Example Libraries** – Reference-ready code snippets
-
----
-
-## 📌 Tech Stack
-
-### 🖥️ Frontend
-
-- React (Vite + TypeScript)
-- Monaco Editor
-- Tailwind CSS
-- DaisyUI, Herui, ShadCN
-
-### 🔧 Backend
-
-- Spring Boot
-- Docker
-- SQL Database (MySQL/PostgreSQL)
-- REST API
-
-### 🧩 Additional Technologies
-
-- JWT / OAuth Authentication
-- AI Chatbot System
-- Future: Cloud Deployment
-
----
-
-## 💻 System Requirements
-
-### For Users
-
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- Internet connection
-
-### For Developers
-
-- Node.js 16+
-- Java 17+
-- Docker
-- 4 GB RAM minimum
-- 10 GB free disk space
-
----
-
-## ⚙️ Setup & Installation
-
-### 🔧 Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
+```env
+MONGO_URI=<Your MongoDB Connection String>
+JWT_SECRET=<A strong random string for JWT>
+WEATHER_API_KEY=<Your OpenWeatherMap API Key>
+PORT=5000 # Or your desired port
 ```
+
+### Running the Application
+
+1. Start the backend server:
+
+   ```bash
+   cd backend
+   npm start # or npm run dev if using nodemon
+   ```
+
+2. Start the frontend development server:
+
+   ```bash
+   cd ../frontend
+   npm run dev
+   ```
+
+3. Open your browser and navigate to `http://localhost:5173` (or the port specified by Vite).
+
+## Backend API Endpoints
+
+The backend API runs on `http://localhost:5000` (or your specified port).
+
+### Authentication
+
+- **`POST /api/users/register`** (Note: The original README used `/api/users` for registration, but `/api/users/register` is more conventional and reflected in `userController.js` and `userRoutes.js`)
+
+  - **Description:** Register a new user.
+  - **Access:** Public
+  - **Request Body:**
+    ```json
+    {
+      "username": "string",
+      "email": "string",
+      "password": "string"
+    }
+    ```
+
+- **`POST /api/users/login`**
+
+  - **Description:** Authenticate and login a user.
+  - **Access:** Public
+  - **Request Body:**
+    ```json
+    {
+      "email": "string",
+      "password": "string"
+    }
+    ```
+
+- **`GET /api/users/profile`**
+
+  - **Description:** Get user profile data.
+  - **Access:** Private (requires JWT in Authorization header)
+
+- **`PATCH /api/users/profile`** (Note: The README used `PUT /api/users/me`, then `PUT /api/users/me` for updates. The primary `README.md` used `PATCH /api/users/profile`, let's align with the more common `PATCH` for updates to specific fields and keep profile path)
+
+  - **Description:** Update user profile data.
+  - **Access:** Private (requires JWT in Authorization header)
+  - **Request Body:** (fields are optional)
+    ```json
+    {
+      "username": "string",
+      "email": "string",
+      "password": "string" 
+    }
+    ```
+
+### Weather
+
+- **`GET /api/weather`**
+
+  - **Description:** Get current weather by city and save to history.
+  - **Access:** Private (requires JWT in Authorization header)
+  - **Query Parameters:**
+    - `city`: The name of the city (required)
+
+- **`GET /api/weather/history`**
+
+  - **Description:** Get the logged-in user's weather search history.
+  - **Access:** Private (requires JWT in Authorization header)
+  - **Query Parameters:** (optional, for pagination)
+    - `page`: Page number (default: 1)
+    - `limit`: Number of items per page (default: 10)
+
+- **`DELETE /api/weather/history/:id`**
+  - **Description:** Delete a specific weather history entry for the logged-in user. (Admins can also use this route for any entry).
+  - **Access:** Private (requires JWT in Authorization header)
+  - **URL Parameters:**
+    - `id`: The ID of the history entry to delete
+
+### Admin
+
+- **`GET /api/users/admin/users`**
+
+  - **Description:** Get a list of all users.
+  - **Access:** Private/Admin (requires JWT and admin role)
+
+- **`GET /api/users/admin/users/:userId`**
+
+  - **Description:** Get a specific user by ID.
+  - **Access:** Private/Admin (requires JWT and admin role)
+  - **URL Parameters:**
+    - `userId`: The ID of the user to fetch
+
+- **`PATCH /api/users/admin/users/:userId/admin`**
+
+  - **Description:** Toggle the admin status of a user.
+  - **Access:** Private/Admin (requires JWT and admin role)
+  - **URL Parameters:**
+    - `userId`: The ID of the user to update
+  - **Request Body:**
+    ```json
+    {
+      "isAdmin": true 
+    }
+    ```
+
+- **`DELETE /api/users/admin/users/:userId`**
+
+  - **Description:** Delete a user by ID.
+  - **Access:** Private/Admin (requires JWT and admin role)
+  - **URL Parameters:**
+    - `userId`: The ID of the user to delete
+
+- **`GET /api/weather/history/all`**
+
+  - **Description:** Get all users' weather search history (Admin only).
+  - **Access:** Private/Admin (requires JWT and admin role)
+  - **Query Parameters:** (optional, for pagination)
+    - `page`: Page number (default: 1)
+    - `limit`: Number of items per page (default: 10)
+
+- **`DELETE /api/users/admin/users/:userId/history`**
+
+  - **Description:** Delete all search history for a specific user (Admin only).
+  - **Access:** Private/Admin (requires JWT and admin role)
+  - **URL Parameters:**
+    - `userId`: The ID of the user whose history is to be deleted
+
+- **`GET /api/users/admin/stats`**
+  - **Description:** Get application statistics (e.g., total users, total searches).
+  - **Access:** Private/Admin (requires JWT and admin role)

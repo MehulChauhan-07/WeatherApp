@@ -1,219 +1,233 @@
-# WeatherApp
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/MehulChauhan-07/WeatherApp)
+# ⛅ WeatherApp
 
-This is a full-stack weather application with a React/Vite/TypeScript frontend and an Express backend.
+A full-stack weather tracking application with a **React/Vite/TypeScript frontend** and an **Express/MongoDB backend**.
 
-## Table of Contents
+> 🌤️ Get real-time weather by city, manage search history, and explore admin-level insights!
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Running the Application](#running-the-application)
-- [Backend API Endpoints](#backend-api-endpoints)
-  - [Authentication](#authentication)
-  - [Weather](#weather)
-  - [Admin](#admin)
+---
 
-## Features
+## 📑 Table of Contents
 
-- User Authentication (Register, Login)
-- Fetch current weather by city
-- Save user's weather search history
-- User-specific weather history page with deletion
-- Admin Dashboard:
-  - View all users
-  - Change user roles (Admin/User)
-  - Delete users
-  - View all weather search history
-  - Delete individual history entries (Admin)
-  - View application statistics
-- Modern UI/UX with Tailwind CSS, Shadcn UI, Lucide Icons, and Framer Motion
-- Responsive Design
+- [🌟 Features](#-features)
+- [🚀 Getting Started](#-getting-started)
+  - [📦 Prerequisites](#-prerequisites)
+  - [📥 Installation](#-installation)
+  - [🔐 Environment Variables](#-environment-variables)
+  - [▶️ Running the Application](#-running-the-application)
+- [🛠️ Backend API Endpoints](#-backend-api-endpoints)
+  - [🔐 Authentication](#authentication)
+  - [🌦️ Weather](#weather)
+  - [🧑‍💼 Admin](#admin)
 
-## Getting Started
+---
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+## 🌟 Features
 
-### Prerequisites
+- 🔐 User Authentication (Register/Login)
+- 🌇 Fetch current weather by city (via OpenWeatherMap API)
+- 💾 Save and view user-specific weather search history
+- 🗑️ Delete individual search records
+- 🧑‍💼 Admin Dashboard:
+  - View & manage all users
+  - Toggle user roles (Admin/User)
+  - Delete users or history entries
+  - View application-wide statistics
+- 💅 Modern UI with Tailwind CSS, ShadCN UI, Lucide Icons, and Framer Motion
+- 📱 Responsive Design
 
-- Node.js and npm installed.
-- MongoDB installed and running.
+---
 
-### Installation
+## 🚀 Getting Started
 
-1. Clone the repository:
+Follow the instructions below to run the project locally for development/testing.
+
+### 📦 Prerequisites
+
+- [Node.js](https://nodejs.org/) (v16+ recommended)
+- [MongoDB](https://www.mongodb.com/) installed and running
+- API key from [OpenWeatherMap](https://openweathermap.org/api)
+
+---
+
+### 📥 Installation
+
+1. **Clone the repository**:
 
    ```bash
    git clone https://github.com/mehulchauhan-07/weatherapp.git
    cd weatherapp
    ```
 
-2. Install frontend dependencies:
+2. **Install frontend dependencies**:
 
    ```bash
    cd frontend
    npm install
    ```
 
-3. Install backend dependencies:
-
+3. **Install backend dependencies**:
    ```bash
    cd ../backend
    npm install
    ```
 
-### Environment Variables
+---
 
-Create a `.env` file in the `backend` directory with the following variables:
+### 🔐 Environment Variables
+
+Create a `.env` file in the `backend/` directory:
 
 ```env
-MONGO_URI=<Your MongoDB Connection String>
-JWT_SECRET=<A strong random string for JWT>
-WEATHER_API_KEY=<Your OpenWeatherMap API Key>
-PORT=5000 # Or your desired port
+MONGO_URI=<Your MongoDB connection string>
+JWT_SECRET=<Strong secret string>
+WEATHER_API_KEY=<Your OpenWeatherMap API key>
+PORT=5000
 ```
 
-### Running the Application
+---
 
-1. Start the backend server:
+### ▶️ Running the Application
+
+1. **Start the backend server**:
 
    ```bash
    cd backend
-   npm start # or npm run dev if using nodemon
+   npm start       # or use: npm run dev (if using nodemon)
    ```
 
-2. Start the frontend development server:
+2. **Start the frontend server**:
 
    ```bash
    cd ../frontend
    npm run dev
    ```
 
-3. Open your browser and navigate to `http://localhost:5173` (or the port specified by Vite).
+3. Open your browser at: `http://localhost:5173`
 
-## Backend API Endpoints
+---
 
-The backend API runs on `http://localhost:5000` (or your specified port).
+## 🛠️ Backend API Endpoints
 
-### Authentication
+The backend API is served at `http://localhost:5000`.
 
-- **`POST /api/users/register`** (Note: The original README used `/api/users` for registration, but `/api/users/register` is more conventional and reflected in `userController.js` and `userRoutes.js`)
+---
 
-  - **Description:** Register a new user.
-  - **Access:** Public
-  - **Request Body:**
-    ```json
-    {
-      "username": "string",
-      "email": "string",
-      "password": "string"
-    }
-    ```
+### 🔐 Authentication
 
-- **`POST /api/users/login`**
+#### `POST /api/users/register`
 
-  - **Description:** Authenticate and login a user.
-  - **Access:** Public
-  - **Request Body:**
-    ```json
-    {
-      "email": "string",
-      "password": "string"
-    }
-    ```
+- **Description:** Register a new user.
+- **Body:**
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "password": "string"
+  }
+  ```
 
-- **`GET /api/users/profile`**
+#### `POST /api/users/login`
 
-  - **Description:** Get user profile data.
-  - **Access:** Private (requires JWT in Authorization header)
+- **Description:** Login a user.
+- **Body:**
+  ```json
+  {
+    "email": "string",
+    "password": "string"
+  }
+  ```
 
-- **`PATCH /api/users/profile`** (Note: The README used `PUT /api/users/me`, then `PUT /api/users/me` for updates. The primary `README.md` used `PATCH /api/users/profile`, let's align with the more common `PATCH` for updates to specific fields and keep profile path)
+#### `GET /api/users/profile`
 
-  - **Description:** Update user profile data.
-  - **Access:** Private (requires JWT in Authorization header)
-  - **Request Body:** (fields are optional)
-    ```json
-    {
-      "username": "string",
-      "email": "string",
-      "password": "string" 
-    }
-    ```
+- **Description:** Get current user profile.
+- **Access:** Private (JWT required)
 
-### Weather
+#### `PATCH /api/users/profile`
 
-- **`GET /api/weather`**
+- **Description:** Update profile info (partial updates).
+- **Body (any field optional):**
+  ```json
+  {
+    "username": "string",
+    "email": "string",
+    "password": "string"
+  }
+  ```
 
-  - **Description:** Get current weather by city and save to history.
-  - **Access:** Private (requires JWT in Authorization header)
-  - **Query Parameters:**
-    - `city`: The name of the city (required)
+---
 
-- **`GET /api/weather/history`**
+### 🌦️ Weather
 
-  - **Description:** Get the logged-in user's weather search history.
-  - **Access:** Private (requires JWT in Authorization header)
-  - **Query Parameters:** (optional, for pagination)
-    - `page`: Page number (default: 1)
-    - `limit`: Number of items per page (default: 10)
+#### `GET /api/weather?city={city}`
 
-- **`DELETE /api/weather/history/:id`**
-  - **Description:** Delete a specific weather history entry for the logged-in user. (Admins can also use this route for any entry).
-  - **Access:** Private (requires JWT in Authorization header)
-  - **URL Parameters:**
-    - `id`: The ID of the history entry to delete
+- **Description:** Fetch weather data and log to user history.
+- **Query Param:** `city` (required)
 
-### Admin
+#### `GET /api/weather/history`
 
-- **`GET /api/users/admin/users`**
+- **Description:** Get logged-in user's search history.
+- **Query Params (optional):**
+  - `page`: Page number (default: 1)
+  - `limit`: Results per page (default: 10)
 
-  - **Description:** Get a list of all users.
-  - **Access:** Private/Admin (requires JWT and admin role)
+#### `DELETE /api/weather/history/:id`
 
-- **`GET /api/users/admin/users/:userId`**
+- **Description:** Delete a specific weather history record.
 
-  - **Description:** Get a specific user by ID.
-  - **Access:** Private/Admin (requires JWT and admin role)
-  - **URL Parameters:**
-    - `userId`: The ID of the user to fetch
+---
 
-- **`PATCH /api/users/admin/users/:userId/admin`**
+### 🧑‍💼 Admin
 
-  - **Description:** Toggle the admin status of a user.
-  - **Access:** Private/Admin (requires JWT and admin role)
-  - **URL Parameters:**
-    - `userId`: The ID of the user to update
-  - **Request Body:**
-    ```json
-    {
-      "isAdmin": true 
-    }
-    ```
+> All admin routes require valid JWT and `isAdmin: true`
 
-- **`DELETE /api/users/admin/users/:userId`**
+#### `GET /api/users/admin/users`
 
-  - **Description:** Delete a user by ID.
-  - **Access:** Private/Admin (requires JWT and admin role)
-  - **URL Parameters:**
-    - `userId`: The ID of the user to delete
+- View all users.
 
-- **`GET /api/weather/history/all`**
+#### `GET /api/users/admin/users/:userId`
 
-  - **Description:** Get all users' weather search history (Admin only).
-  - **Access:** Private/Admin (requires JWT and admin role)
-  - **Query Parameters:** (optional, for pagination)
-    - `page`: Page number (default: 1)
-    - `limit`: Number of items per page (default: 10)
+- View user by ID.
 
-- **`DELETE /api/users/admin/users/:userId/history`**
+#### `PATCH /api/users/admin/users/:userId/admin`
 
-  - **Description:** Delete all search history for a specific user (Admin only).
-  - **Access:** Private/Admin (requires JWT and admin role)
-  - **URL Parameters:**
-    - `userId`: The ID of the user whose history is to be deleted
+- Toggle admin status.
+- **Body:**
+  ```json
+  {
+    "isAdmin": true
+  }
+  ```
 
-- **`GET /api/users/admin/stats`**
-  - **Description:** Get application statistics (e.g., total users, total searches).
-  - **Access:** Private/Admin (requires JWT and admin role)
+#### `DELETE /api/users/admin/users/:userId`
+
+- Delete user by ID.
+
+#### `GET /api/weather/history/all`
+
+- Get full history from all users.
+- Supports pagination via `page` and `limit`.
+
+#### `DELETE /api/users/admin/users/:userId/history`
+
+- Delete all history for a user.
+
+#### `GET /api/users/admin/stats`
+
+- View overall app stats: total users, searches, etc.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for more info.
+
+---
+
+## 📬 Contact
+
+For issues, questions, or collaboration, please reach out via GitHub or open an issue.
+
+---
+
+> 🌐 _Stay informed. Stay prepared. With WeatherApp, weather data is always at your fingertips!_
