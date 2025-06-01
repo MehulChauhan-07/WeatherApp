@@ -1,4 +1,5 @@
 # WeatherApp
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/MehulChauhan-07/WeatherApp)
 
 This is a full-stack weather application with a React/Vite/TypeScript frontend and an Express backend.
 
@@ -45,8 +46,8 @@ These instructions will get you a copy of the project up and running on your loc
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
-   cd WeatherApp
+   git clone https://github.com/mehulchauhan-07/weatherapp.git
+   cd weatherapp
    ```
 
 2. Install frontend dependencies:
@@ -98,7 +99,7 @@ The backend API runs on `http://localhost:5000` (or your specified port).
 
 ### Authentication
 
-- **`POST /api/users`**
+- **`POST /api/users/register`** (Note: The original README used `/api/users` for registration, but `/api/users/register` is more conventional and reflected in `userController.js` and `userRoutes.js`)
 
   - **Description:** Register a new user.
   - **Access:** Public
@@ -128,7 +129,8 @@ The backend API runs on `http://localhost:5000` (or your specified port).
   - **Description:** Get user profile data.
   - **Access:** Private (requires JWT in Authorization header)
 
-- **`PATCH /api/users/profile`**
+- **`PATCH /api/users/profile`** (Note: The README used `PUT /api/users/me`, then `PUT /api/users/me` for updates. The primary `README.md` used `PATCH /api/users/profile`, let's align with the more common `PATCH` for updates to specific fields and keep profile path)
+
   - **Description:** Update user profile data.
   - **Access:** Private (requires JWT in Authorization header)
   - **Request Body:** (fields are optional)
@@ -136,7 +138,7 @@ The backend API runs on `http://localhost:5000` (or your specified port).
     {
       "username": "string",
       "email": "string",
-      "password": "string"
+      "password": "string" 
     }
     ```
 
@@ -158,7 +160,7 @@ The backend API runs on `http://localhost:5000` (or your specified port).
     - `limit`: Number of items per page (default: 10)
 
 - **`DELETE /api/weather/history/:id`**
-  - **Description:** Delete a specific weather history entry for the logged-in user.
+  - **Description:** Delete a specific weather history entry for the logged-in user. (Admins can also use this route for any entry).
   - **Access:** Private (requires JWT in Authorization header)
   - **URL Parameters:**
     - `id`: The ID of the history entry to delete
@@ -186,7 +188,7 @@ The backend API runs on `http://localhost:5000` (or your specified port).
   - **Request Body:**
     ```json
     {
-      "isAdmin": "boolean"
+      "isAdmin": true 
     }
     ```
 
@@ -199,18 +201,18 @@ The backend API runs on `http://localhost:5000` (or your specified port).
 
 - **`GET /api/weather/history/all`**
 
-  - **Description:** Get all users' weather search history.
+  - **Description:** Get all users' weather search history (Admin only).
   - **Access:** Private/Admin (requires JWT and admin role)
   - **Query Parameters:** (optional, for pagination)
     - `page`: Page number (default: 1)
     - `limit`: Number of items per page (default: 10)
 
-- **`DELETE /api/users/admin/history/:id`**
+- **`DELETE /api/users/admin/users/:userId/history`**
 
-  - **Description:** Delete a specific history entry by ID (Admin).
+  - **Description:** Delete all search history for a specific user (Admin only).
   - **Access:** Private/Admin (requires JWT and admin role)
   - **URL Parameters:**
-    - `id`: The ID of the history entry to delete
+    - `userId`: The ID of the user whose history is to be deleted
 
 - **`GET /api/users/admin/stats`**
   - **Description:** Get application statistics (e.g., total users, total searches).
